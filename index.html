@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c39">
+  <meta name="description" content="Berechne Frosthaven-Verbesserungskosten auf Deutsch mit transparentem Rechenweg und Gebäuderabatten.">
+  <title>Frosthaven · Verbesserungskosten</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <style>
+    :root{color-scheme:light;--ice:#d7edf0;--ink:#163443;--muted:#526873;--gold:#f1cb7a}
+    body{margin:0;background:#edf3f4;color:var(--ink);font-family:system-ui,sans-serif;line-height:1.6}
+    .container{max-width:1100px;padding-left:20px;padding-right:20px}
+    header{background:#102c39;color:white;padding:14px 0}
+    .eyebrow{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:#bedce2;font-weight:700}
+    h1{font-size:1.05rem;line-height:1.4;margin:0;font-weight:650}
+    main{margin-top:16px;padding-bottom:24px}
+    .panel{background:white;border:1px solid #d9e4e7;border-radius:12px;padding:16px}
+    .step{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#e5eff1;color:#275b6c;font-size:.8rem;margin-right:9px}
+    h2{font-size:1rem;font-weight:700;margin:0 0 12px}h3{font-size:1rem;font-weight:700}
+    .form-label{font-weight:650;font-size:.9rem}.form-select,.form-control{min-height:48px;background-color:#f8fafb;border-color:#cbd9df;color:var(--ink)}
+    .form-select:focus,.form-control:focus,.form-check-input:focus{border-color:#36758b;box-shadow:0 0 0 .2rem #36758b30}
+    .hint{color:var(--muted);font-size:.82rem;margin:6px 0 0}
+    .option{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid #dde6e9;border-radius:9px;margin-top:8px;cursor:pointer}
+    .option:has(input:checked){background:#edf6f7;border-color:#7cabb8}.option:has(input:disabled){opacity:.65}
+    .form-check-input{flex:none;width:21px;height:21px;margin:3px 0 0;cursor:pointer}.form-check-input:checked{background-color:#276779;border-color:#276779}
+    .option strong{display:block;font-size:.9rem}.option small{display:block;color:var(--muted);font-size:.8rem}
+    .result{background:radial-gradient(ellipse at 100% 0%,#315465,transparent 65%),#163443;color:white;border:0}
+    .result .eyebrow{color:#d4e6eb}.amount{display:block;color:var(--gold);font-size:4rem;font-weight:750;line-height:1.15;letter-spacing:-.04em;margin-top:18px}
+    .gold-label{color:#ead5a9;font-size:.9rem}.result h2{margin-bottom:6px}.selection{color:#d1e2e7;font-size:.9rem;margin:20px 0}
+    .calculation{padding-top:18px;border-top:1px solid #ffffff30}.line{display:flex;justify-content:space-between;gap:16px;font-size:.85rem;margin:12px 0}.line span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}.line.total{border-top:1px solid #ffffff30;padding-top:14px;font-weight:700;color:var(--gold)}
+    .result .hint{color:#c9dce2}.btn-reset{border:1px solid #b8ced6;color:var(--ink);font-size:.85rem;min-height:44px;border-radius:10px}.btn-reset:hover{background:#dcebed}
+    details summary{cursor:pointer;font-weight:650;padding:5px 0}details p,details li{font-size:.87rem;color:var(--muted)}details p{margin:12px 0}a{color:#276779;text-underline-offset:3px}footer{font-size:.78rem;color:var(--muted);padding:0 0 26px}.notice{font-size:.82rem;color:var(--muted);margin-bottom:22px}
+    [hidden]{display:none!important}:focus-visible{outline:3px solid #4591ac;outline-offset:3px}
+    .result details summary{color:#d4e6eb}.result details[open] summary{margin-bottom:12px}.result .calculation{padding-top:0;border-top:0}
+    #calculator .my-4{margin-top:16px!important;margin-bottom:16px!important}
+    @media(max-width:991.98px){
+      .container{padding-left:12px;padding-right:12px}body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+      .cost-summary{position:fixed;z-index:10;bottom:0;left:0;right:0;display:flex;align-items:baseline;justify-content:center;gap:8px;background:#163443;padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -3px 14px #16344320}
+      .cost-summary::before{content:'Kosten';color:#d4e6eb;font-size:.9rem;margin-right:auto}
+      .cost-summary .amount{font-size:2rem;margin:0;line-height:1.2}.cost-summary .selection{display:none}
+      .result #result-title{display:none}.result{padding:14px 16px}.result .hint{margin-top:12px;font-size:.78rem}
+      .card-fields>div{width:50%}.card-fields .form-label{font-size:.8rem}.option small{font-size:.75rem;line-height:1.4}.option strong{font-size:.85rem}
+    }
+    @media(min-width:992px){.result-wrap{position:sticky;top:16px}.panel{padding:22px}}
+    @media(prefers-reduced-motion:no-preference){.option{transition:background .15s,border-color .15s}}
+  </style>
+</head>
+<body>
+  <header><div class="container"><h1>Frosthaven · Verbesserungskosten</h1></div></header>
+  <main class="container">
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <form id="calculator" class="panel" autocomplete="off">
+          <h2><span class="step">01</span>Deine Verbesserung</h2>
+          <label class="form-label" for="enhancement">Was möchtest du hinzufügen?</label>
+          <select id="enhancement" name="enhancement" class="form-select"></select>
+          <div id="hex-fields" class="mt-3" hidden><label class="form-label" for="hexes">Vorhandene Wirkungsbereich-Felder</label><input id="hexes" name="hexes" class="form-control" type="number" min="1" step="1" value="2" required><p class="hint">Zähle die vorhandenen Felder vor der neuen Verbesserung. Grundkosten: 200 ÷ Felder, aufgerundet.</p></div>
+          <hr class="my-4">
+          <h2><span class="step">02</span>Karte &amp; Aktion</h2>
+          <div class="row g-3 card-fields">
+            <div class="col-sm-6"><label class="form-label" for="level">Kartenstufe</label><select id="level" name="level" class="form-select"><option value="1">1 / X</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></div>
+            <div class="col-sm-6"><label class="form-label" for="previous">Bisherige Verbesserungen</label><input id="previous" name="previous" class="form-control" type="number" min="0" step="1" value="0" required><p class="hint">Nur auf derselben Aktion (obere oder untere Kartenhälfte) zählen.</p></div>
+          </div>
+          <label class="option"><input class="form-check-input" id="multiple" name="multiple" type="checkbox"><span><strong>Mehrere Figuren oder Felder</strong><small id="multiple-hint">Gilt auch bei bedingten zusätzlichen Zielen, mehreren Beschworenen oder Markern.</small></span></label>
+          <label class="option"><input class="form-check-input" id="lost" name="lost" type="checkbox"><span><strong>Aktion mit Verloren-Symbol</strong><small>Halbiert die Grundkosten nur, wenn die Aktion kein Anhaltend-Symbol hat.</small></span></label>
+          <label class="option"><input class="form-check-input" id="actionPersistent" name="actionPersistent" type="checkbox"><span><strong>Aktion mit Anhaltend-Symbol</strong><small>Verhindert den Rabatt durch das Verloren-Symbol, auch bei Beschworenenwerten.</small></span></label>
+          <label class="option"><input class="form-check-input" id="persistent" name="persistent" type="checkbox"><span><strong>Verbesserte Fertigkeit bietet anhaltenden Bonus</strong><small id="persistent-hint">Verdreifacht die Grundkosten. Prüfe die Fertigkeit, nicht nur das Symbol der Aktion.</small></span></label>
+          <hr class="my-4">
+          <h2><span class="step">03</span>Gebäude 44</h2>
+          <label class="form-label" for="building">Gebäudestufe</label>
+          <select id="building" name="building" class="form-select"><option value="1">Stufe 1 · ohne Rabatt</option><option value="2">Stufe 2 · 10 Gold Rabatt</option><option value="3">Stufe 3 · zusätzlich geringerer Stufenzuschlag</option><option value="4">Stufe 4 · zusätzlich geringerer Verbesserungszuschlag</option></select>
+          <button type="reset" class="btn btn-reset w-100 mt-4">Auswahl zurücksetzen</button>
+        </form>
+      </div>
+      <div class="col-lg-5"><div class="result-wrap">
+        <section class="panel result" aria-labelledby="result-title"><h2 id="result-title" class="eyebrow">Deine Verbesserung kostet</h2><div class="cost-summary" role="status" aria-live="polite" aria-atomic="true"><output id="cost" class="amount" for="enhancement hexes level previous multiple lost actionPersistent persistent building">50</output><span class="gold-label">Gold</span><p id="selection" class="selection">Angriff +1 · Karte Stufe 1 / X</p></div><details><summary>Rechenweg anzeigen</summary><div id="breakdown" class="calculation"></div></details><p id="result-note" class="hint mb-0"></p></section>
+        <section class="panel mt-4"><details><summary>Regelhinweise</summary><p>Berechnet dauerhafte Verbesserungen. Erst nach dem Bau von Gebäude 44 verfügbar.</p><p>Die Modifikatoren verändern zuerst die Grundkosten. Danach kommen Kartenstufe und bestehende Verbesserungen hinzu. Der Gebäuderabatt wird zuletzt abgezogen.</p><p>Ziel-, Element- und Wirkungsbereich-Verbesserungen werden für mehrere Ziele nicht verdoppelt. Beschworenenwerte erhalten keinen Faktor für anhaltende Boni.</p><p>Schadensfallen kosten wie Angriff +1, Heilfallen wie Heilung +1 und die Bewegung von Markern oder Auflegern wie Bewegung +1.</p><p>Der Rechner prüft die Kosten. Ob der Verbesserungspunkt auf deiner Karte den gewählten Sticker erlaubt, prüfst du anhand der Spielregeln.</p></details><hr><details><summary>Regelquellen</summary><p><a href="https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=77" target="_blank" rel="noopener">Deutsche Spielregel · Seite 77</a></p><p><a href="https://cephalofairgames.github.io/frosthaven-faq/#42-enhancements" target="_blank" rel="noopener">Offizielle FAQ · Verbesserungen</a><br><a href="https://cephalofairgames.github.io/frosthaven-faq/#41-specific-building-questions" target="_blank" rel="noopener">Offizielle FAQ · Gebäuderabatte</a></p><p>Regeln geprüft am 03.10.2026. Inspiration: <a href="https://github.com/pikdonker/frosthaven-enhancement-calculator" target="_blank" rel="noopener">Rechner von pikdonker</a>.</p></details></section>
+      </div></div>
+    </div>
+    <noscript><p class="panel mt-4">Bitte aktiviere JavaScript, um die Verbesserungskosten zu berechnen.</p></noscript>
+  </main>
+  <footer class="container">Inoffizielles Fanprojekt · Frosthaven ist ein Spiel von Cephalofair Games. Keine Verbindung zum Verlag.</footer>
+  <script id="calculator-script">
+    const enhancements = [
+      ['move','Bewegung +1',30,'Werte'],['attack','Angriff +1',50,'Werte'],['range','Reichweite +1',30,'Werte'],['target','Ziele +1',75,'Werte',true],['shield','Schild +1',80,'Werte'],['retaliate','Vergeltung +1',60,'Werte'],['pierce','Durchstechen +1',30,'Werte'],['heal','Heilung +1',30,'Werte'],['push','Schieben +1',30,'Werte'],['pull','Ziehen +1',20,'Werte'],['teleport','Teleportieren +1',50,'Werte'],
+      ['summonHp','Beschworenen-TP +1',40,'Beschworenenwerte'],['summonMove','Beschworenen-Bewegung +1',60,'Beschworenenwerte'],['summonAttack','Beschworenen-Angriff +1',100,'Beschworenenwerte'],['summonRange','Beschworenen-Reichweite +1',50,'Beschworenenwerte'],
+      ['regenerate','Regeneration',40,'Zustände'],['ward','Schutz',75,'Zustände'],['strengthen','Stärkung',100,'Zustände'],['bless','Segen',75,'Zustände'],['wound','Wunde',75,'Zustände'],['poison','Gift',50,'Zustände'],['immobilize','Lähmung',150,'Zustände'],['muddle','Verwirrung',40,'Zustände'],['curse','Fluch',150,'Zustände'],
+      ['element','Element',100,'Weitere Verbesserungen',true],['wildElement','Beliebiges Element',150,'Weitere Verbesserungen',true],['jump','Springen',60,'Weitere Verbesserungen'],['hex','Wirkungsbereich-Feld',null,'Weitere Verbesserungen',true],
+      ['damageTrap','Schadensfalle +1',50,'Sonderfälle'],['healingTrap','Heilfalle +1',30,'Sonderfälle'],['tokenMove','Bewegung von Markern / Auflegern +1',30,'Sonderfälle']
+    ].map(([id,label,cost,group,multipleExempt=false]) => ({id,label,cost,group,multipleExempt,summon:group==='Beschworenenwerte'}));
+    const format = value => new Intl.NumberFormat('de-DE',{maximumFractionDigits:2}).format(value);
+    function calculateCost(state) {
+      const enhancement = enhancements.find(item => item.id === state.enhancement);
+      if (!enhancement) throw new RangeError('Unbekannte Verbesserung');
+      for (const [name,min,max] of [['level',1,9],['building',1,4],['previous',0,Number.MAX_SAFE_INTEGER],['hexes',1,Number.MAX_SAFE_INTEGER]]) {
+        if (!Number.isSafeInteger(state[name]) || state[name]<min || state[name]>max) throw new RangeError('Ungültige Eingabe');
+      }
+      const base = enhancement.id==='hex' ? Math.ceil(200/state.hexes) : enhancement.cost;
+      let modified = base;
+      const lines = [{label:enhancement.id==='hex' ? `Grundkosten · ⌈200 ÷ ${state.hexes}⌉` : 'Grundkosten',value:base}];
+      if (state.multiple && !enhancement.multipleExempt) {modified*=2;lines.push({label:'Mehrere Figuren / Felder · ×2',value:modified});}
+      if (state.lost && !state.actionPersistent) {modified/=2;lines.push({label:'Verloren ohne Anhaltend · ÷2',value:modified});}
+      if (state.persistent && !enhancement.summon) {modified*=3;lines.push({label:'Anhaltender Bonus · ×3',value:modified});}
+      const levelSurcharge = (state.level-1)*(state.building>=3 ? 15 : 25);
+      const previousSurcharge = state.previous*(state.building>=4 ? 50 : 75);
+      const discount = state.building>=2 ? 10 : 0;
+      lines.push({label:'Kartenstufenzuschlag',value:levelSurcharge,prefix:'+'},{label:'Bisherige Verbesserungen',value:previousSurcharge,prefix:'+'});
+      if (discount) lines.push({label:'Gebäuderabatt',value:discount,prefix:'−'});
+      const total = Math.max(0,modified+levelSurcharge+previousSurcharge-discount);
+      if (!Number.isSafeInteger(Math.ceil(total))) throw new RangeError('Eingabe ist zu groß');
+      return {total,lines,enhancement};
+    }
+    const form = document.getElementById('calculator');
+    const fields = Object.fromEntries([...form.elements].filter(item => item.name).map(item => [item.name,item]));
+    for (const group of [...new Set(enhancements.map(item => item.group))]) {
+      const optgroup = document.createElement('optgroup');optgroup.label=group;
+      for (const item of enhancements.filter(item => item.group===group)) {
+        const option = document.createElement('option');option.value=item.id;option.textContent=`${item.label} · ${item.cost===null ? '200 ÷ Felder' : format(item.cost)} Gold`;optgroup.append(option);
+      }
+      fields.enhancement.append(optgroup);
+    }
+    fields.enhancement.value='attack';
+    fields.enhancement.querySelector('[value="attack"]').defaultSelected=true;
+    function render() {
+      const selected = enhancements.find(item => item.id===fields.enhancement.value);
+      document.getElementById('hex-fields').hidden=selected.id!=='hex';
+      fields.hexes.disabled=selected.id!=='hex';
+      fields.multiple.disabled=selected.multipleExempt;
+      fields.persistent.disabled=selected.summon;
+      document.getElementById('multiple-hint').textContent=selected.multipleExempt ? 'Für diese Verbesserung gibt es keinen Mehrziel-Aufschlag.' : 'Gilt auch bei bedingten zusätzlichen Zielen, mehreren Beschworenen oder Markern.';
+      document.getElementById('persistent-hint').textContent=selected.summon ? 'Beschworenenwerte sind von der Verdreifachung ausgenommen.' : 'Verdreifacht die Grundkosten. Prüfe die Fertigkeit, nicht nur das Symbol der Aktion.';
+      const output = document.getElementById('cost');const breakdown=document.getElementById('breakdown');const note=document.getElementById('result-note');
+      if (!form.checkValidity()) {output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent='Bitte gültige ganze Zahlen eingeben.';note.textContent='Die Anzahl muss mindestens 0 sein, die Feldanzahl mindestens 1.';return;}
+      const state=Object.fromEntries(Object.entries(fields).map(([name,item]) => [name,item.type==='checkbox' ? item.checked : item.tagName==='INPUT' || name==='level' || name==='building' ? Number(item.value) : item.value]));
+      if (fields.hexes.disabled) state.hexes=2;
+      let result;
+      try {result=calculateCost(state);} catch {output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent='Bitte kleinere gültige ganze Zahlen eingeben.';note.textContent='';return;}
+      output.value=format(result.total);
+      document.getElementById('selection').textContent=`${selected.label} · Karte Stufe ${state.level===1 ? '1 / X' : state.level}`;
+      breakdown.replaceChildren();
+      for (const line of [...result.lines,{label:'Gesamtkosten',value:result.total,total:true}]) {
+        const row=document.createElement('div');row.className=`line${line.total ? ' total' : ''}`;
+        const label=document.createElement('span');label.textContent=line.label;
+        const value=document.createElement('span');value.textContent=`${line.prefix || ''}${format(line.value)} Gold`;row.append(label,value);breakdown.append(row);
+      }
+      note.textContent=result.total%1 ? 'Die Halbierung ergibt einen halben Goldbetrag. Seite 77 nennt dafür keine zusätzliche Rundung; angezeigt wird der genaue Rechenwert.' : result.total===0 ? 'Der Gebäuderabatt senkt die Kosten auf mindestens 0 Gold.' : 'Die Zuschläge werden nach den Grundkosten-Modifikatoren addiert.';
+    }
+    form.addEventListener('input',render);
+    form.addEventListener('change',render);
+    form.addEventListener('submit',event => event.preventDefault());
+    form.addEventListener('reset',() => setTimeout(render,0));
+    render();
+  </script>
+</body>
+</html>
