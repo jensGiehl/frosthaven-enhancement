@@ -17,6 +17,20 @@ Der Workflow prüft die Berechnung und veröffentlicht nur `index.html`. Er kann
 
 ## Berechnung
 
+Die Eingabe folgt der Reihenfolge **Symbol → Verbesserung → Karte & Aktion → Gebäude**. Zuerst das Verbesserungssymbol auf der Karte auswählen; danach zeigt die Stickerauswahl nur passende Verbesserungen. Die übrigen Angaben werden nach der Stickerwahl freigeschaltet.
+
+| Symbol | Erlaubte Sticker |
+| --- | --- |
+| Viereck | +1 und Springen bei Bewegung einer Figur |
+| Kreis | Wie Viereck, zusätzlich Elemente und beliebiges Element |
+| Raute | Wie Kreis, zusätzlich Wunde, Gift, Lähmung, Verwirrung und Fluch |
+| Raute mit + | Wie Kreis, zusätzlich Regeneration, Schutz, Stärkung und Segen |
+| Sechseck | Nur ein zusätzliches Wirkungsbereich-Feld |
+
+Beim Symbolwechsel bleibt eine weiterhin erlaubte Verbesserung ausgewählt. Eine nicht mehr erlaubte Verbesserung wird gelöscht und die Kostenanzeige wartet auf eine neue Auswahl. Zurücksetzen beginnt wieder bei der Symbolwahl.
+
+Ein +1-Sticker erhöht den Wert direkt am Verbesserungssymbol. Springen ist nur für eine Bewegungsfähigkeit einer Figur zulässig, nicht für Beschworene oder Marker / Aufleger. Diese Einschränkung steht zusätzlich bei der Auswahl von Springen.
+
 - Alle 28 Verbesserungen der Tabelle auf Seite 77 sowie drei Sonderfälle.
 - Grundkosten für ein zusätzliches Wirkungsbereich-Feld: `ceil(200 / vorhandene Felder)`.
 - Mehrere Figuren / Felder: Grundkosten ×2, auch bei bedingten Mehrfachzielen. Keine Verdoppelung für Ziele +1, Elemente und Wirkungsbereich-Felder.
@@ -28,7 +42,7 @@ Der Workflow prüft die Berechnung und veröffentlicht nur `index.html`. Er kann
 
 Beispiel: Angriff +1, mehrere Ziele, Verloren ohne Anhaltend, Karte Stufe 3, eine vorhandene Verbesserung, Gebäude Stufe 4: `50 × 2 ÷ 2 + 2 × 15 + 50 − 10 = 120 Gold`.
 
-Die Auswahl berechnet den Preis; sie prüft nicht die Zulässigkeit eines Stickers auf einem bestimmten Verbesserungspunkt. Temporäre Verbesserungen aus der Spielvariante sind nicht enthalten. Bei halben Goldbeträgen wird der genaue Rechenwert angezeigt, da Seite 77 keine zusätzliche Rundung für die Halbierung nennt.
+Die Auswahl filtert nach dem angegebenen Symbol; die passende Fertigkeit und den zugehörigen Wert auf der Karte wählst du selbst. Temporäre Verbesserungen aus der Spielvariante sind nicht enthalten. Bei halben Goldbeträgen wird der genaue Rechenwert angezeigt, da Seite 77 keine zusätzliche Rundung für die Halbierung nennt.
 
 ## Prüfen
 
@@ -38,12 +52,13 @@ Mit Node.js (im Workflow Version 24):
 node --test tests/calculator.test.cjs
 ```
 
-Die Tests verwenden dieselbe Berechnungsfunktion wie die HTML-Datei und prüfen insbesondere Modifikatoren-Reihenfolge, Mehrziel-Ausnahmen, Beschworenenwerte, Gebäuderabatte und ungültige Eingaben.
+Die Tests verwenden dieselben Funktionen wie die HTML-Datei und prüfen insbesondere die erlaubten Sticker für alle fünf Symbole, Modifikatoren-Reihenfolge, Mehrziel-Ausnahmen, Beschworenenwerte, Gebäuderabatte und ungültige Eingaben.
 
 ## Quellen
 
-Regelstand geprüft am 03.10.2026:
+Kostenregeln geprüft am 03.10.2026, Verbesserungssymbole am 08.10.2026:
 
+- [Deutsche Frosthaven-Spielregel, Verbesserungssymbole, Seite 68](https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=68)
 - [Deutsche Frosthaven-Spielregel, Anhang D, Seite 77](https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=77)
 - [Offizielle FAQ, Abschnitt 4.2 – Enhancements](https://cephalofairgames.github.io/frosthaven-faq/#42-enhancements)
 - [Offizielle FAQ, Abschnitt 4.1 – Gebäude 44](https://cephalofairgames.github.io/frosthaven-faq/#41-specific-building-questions)

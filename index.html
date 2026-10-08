@@ -17,10 +17,14 @@
     main{margin-top:16px;padding-bottom:24px}
     .panel{background:white;border:1px solid #d9e4e7;border-radius:12px;padding:16px}
     .step{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#e5eff1;color:#275b6c;font-size:.8rem;margin-right:9px}
-    h2{font-size:1rem;font-weight:700;margin:0 0 12px}h3{font-size:1rem;font-weight:700}
+    h2,legend.h2{font-size:1rem;font-weight:700;margin:0 0 12px}h3{font-size:1rem;font-weight:700}fieldset:disabled legend{color:var(--muted)}
     .form-label{font-weight:650;font-size:.9rem}.form-select,.form-control{min-height:48px;background-color:#f8fafb;border-color:#cbd9df;color:var(--ink)}
     .form-select:focus,.form-control:focus,.form-check-input:focus{border-color:#36758b;box-shadow:0 0 0 .2rem #36758b30}
     .hint{color:var(--muted);font-size:.82rem;margin:6px 0 0}
+    fieldset{min-width:0}legend{float:none;width:auto}.symbol-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .symbol-option{position:relative;display:flex;align-items:center;gap:10px;border:1px solid #cbd9df;border-radius:10px;padding:12px;cursor:pointer;background:#f8fafb;min-height:64px;font-size:.85rem;font-weight:650}
+    .symbol-option input{position:absolute;opacity:0;width:1px;height:1px}.symbol-option:has(input:checked){background:#e5f2f4;border-color:#276779;box-shadow:inset 0 0 0 1px #276779}.symbol-option:has(input:focus-visible){outline:3px solid #4591ac;outline-offset:3px}
+    .symbol-option svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:2}.symbol-option:last-child{grid-column:1/-1}
     .option{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid #dde6e9;border-radius:9px;margin-top:8px;cursor:pointer}
     .option:has(input:checked){background:#edf6f7;border-color:#7cabb8}.option:has(input:disabled){opacity:.65}
     .form-check-input{flex:none;width:21px;height:21px;margin:3px 0 0;cursor:pointer}.form-check-input:checked{background-color:#276779;border-color:#276779}
@@ -52,12 +56,28 @@
     <div class="row g-4">
       <div class="col-lg-7">
         <form id="calculator" class="panel" autocomplete="off">
-          <h2><span class="step">01</span>Deine Verbesserung</h2>
-          <label class="form-label" for="enhancement">Was möchtest du hinzufügen?</label>
-          <select id="enhancement" name="enhancement" class="form-select"></select>
-          <div id="hex-fields" class="mt-3" hidden><label class="form-label" for="hexes">Vorhandene Wirkungsbereich-Felder</label><input id="hexes" name="hexes" class="form-control" type="number" min="1" step="1" value="2" required><p class="hint">Zähle die vorhandenen Felder vor der neuen Verbesserung. Grundkosten: 200 ÷ Felder, aufgerundet.</p></div>
+          <fieldset>
+            <legend class="h2"><span class="step">01</span>Symbol auf deiner Karte</legend>
+            <div class="symbol-grid">
+              <label class="symbol-option"><input type="radio" name="symbol" value="square" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20"/></svg><span>Viereck</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="circle" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/></svg><span>Kreis</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="diamond" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z"/></svg><span>Raute</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="diamondPlus" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z M16 10v12 M10 16h12"/></svg><span>Raute mit +</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="hex" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m9 4 14 0 7 12-7 12H9L2 16Z"/></svg><span>Sechseck · Wirkungsbereich</span></label>
+            </div>
+            <p id="symbol-hint" class="hint">Wähle das Symbol an der Stelle, die du verbessern möchtest.</p>
+          </fieldset>
           <hr class="my-4">
-          <h2><span class="step">02</span>Karte &amp; Aktion</h2>
+          <fieldset id="enhancement-step" disabled>
+          <legend class="h2"><span class="step">02</span>Deine Verbesserung</legend>
+          <label class="form-label" for="enhancement">Was möchtest du hinzufügen?</label>
+          <select id="enhancement" name="enhancement" class="form-select" required aria-describedby="enhancement-hint"><option value="">Bitte zuerst ein Symbol auswählen</option></select>
+          <p id="enhancement-hint" class="hint">Die Auswahl zeigt nur Sticker, die zum gewählten Symbol passen.</p>
+          <div id="hex-fields" class="mt-3" hidden><label class="form-label" for="hexes">Vorhandene Wirkungsbereich-Felder</label><input id="hexes" name="hexes" class="form-control" type="number" min="1" step="1" value="2" required><p class="hint">Zähle die vorhandenen Felder vor der neuen Verbesserung. Grundkosten: 200 ÷ Felder, aufgerundet.</p></div>
+          </fieldset>
+          <hr class="my-4">
+          <fieldset id="card-step" disabled>
+          <legend class="h2"><span class="step">03</span>Karte &amp; Aktion</legend>
           <div class="row g-3 card-fields">
             <div class="col-sm-6"><label class="form-label" for="level">Kartenstufe</label><select id="level" name="level" class="form-select"><option value="1">1 / X</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></div>
             <div class="col-sm-6"><label class="form-label" for="previous">Bisherige Verbesserungen</label><input id="previous" name="previous" class="form-control" type="number" min="0" step="1" value="0" required><p class="hint">Nur auf derselben Aktion (obere oder untere Kartenhälfte) zählen.</p></div>
@@ -66,16 +86,19 @@
           <label class="option"><input class="form-check-input" id="lost" name="lost" type="checkbox"><span><strong>Aktion mit Verloren-Symbol</strong><small>Halbiert die Grundkosten nur, wenn die Aktion kein Anhaltend-Symbol hat.</small></span></label>
           <label class="option"><input class="form-check-input" id="actionPersistent" name="actionPersistent" type="checkbox"><span><strong>Aktion mit Anhaltend-Symbol</strong><small>Verhindert den Rabatt durch das Verloren-Symbol, auch bei Beschworenenwerten.</small></span></label>
           <label class="option"><input class="form-check-input" id="persistent" name="persistent" type="checkbox"><span><strong>Verbesserte Fertigkeit bietet anhaltenden Bonus</strong><small id="persistent-hint">Verdreifacht die Grundkosten. Prüfe die Fertigkeit, nicht nur das Symbol der Aktion.</small></span></label>
+          </fieldset>
           <hr class="my-4">
-          <h2><span class="step">03</span>Gebäude 44</h2>
+          <fieldset id="building-step" disabled>
+          <legend class="h2"><span class="step">04</span>Gebäude 44</legend>
           <label class="form-label" for="building">Gebäudestufe</label>
           <select id="building" name="building" class="form-select"><option value="1">Stufe 1 · ohne Rabatt</option><option value="2">Stufe 2 · 10 Gold Rabatt</option><option value="3">Stufe 3 · zusätzlich geringerer Stufenzuschlag</option><option value="4">Stufe 4 · zusätzlich geringerer Verbesserungszuschlag</option></select>
+          </fieldset>
           <button type="reset" class="btn btn-reset w-100 mt-4">Auswahl zurücksetzen</button>
         </form>
       </div>
       <div class="col-lg-5"><div class="result-wrap">
-        <section class="panel result" aria-labelledby="result-title"><h2 id="result-title" class="eyebrow">Deine Verbesserung kostet</h2><div class="cost-summary" role="status" aria-live="polite" aria-atomic="true"><output id="cost" class="amount" for="enhancement hexes level previous multiple lost actionPersistent persistent building">50</output><span class="gold-label">Gold</span><p id="selection" class="selection">Angriff +1 · Karte Stufe 1 / X</p></div><details><summary>Rechenweg anzeigen</summary><div id="breakdown" class="calculation"></div></details><p id="result-note" class="hint mb-0"></p></section>
-        <section class="panel mt-4"><details><summary>Regelhinweise</summary><p>Berechnet dauerhafte Verbesserungen. Erst nach dem Bau von Gebäude 44 verfügbar.</p><p>Die Modifikatoren verändern zuerst die Grundkosten. Danach kommen Kartenstufe und bestehende Verbesserungen hinzu. Der Gebäuderabatt wird zuletzt abgezogen.</p><p>Ziel-, Element- und Wirkungsbereich-Verbesserungen werden für mehrere Ziele nicht verdoppelt. Beschworenenwerte erhalten keinen Faktor für anhaltende Boni.</p><p>Schadensfallen kosten wie Angriff +1, Heilfallen wie Heilung +1 und die Bewegung von Markern oder Auflegern wie Bewegung +1.</p><p>Der Rechner prüft die Kosten. Ob der Verbesserungspunkt auf deiner Karte den gewählten Sticker erlaubt, prüfst du anhand der Spielregeln.</p></details><hr><details><summary>Regelquellen</summary><p><a href="https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=77" target="_blank" rel="noopener">Deutsche Spielregel · Seite 77</a></p><p><a href="https://cephalofairgames.github.io/frosthaven-faq/#42-enhancements" target="_blank" rel="noopener">Offizielle FAQ · Verbesserungen</a><br><a href="https://cephalofairgames.github.io/frosthaven-faq/#41-specific-building-questions" target="_blank" rel="noopener">Offizielle FAQ · Gebäuderabatte</a></p><p>Regeln geprüft am 03.10.2026. Inspiration: <a href="https://github.com/pikdonker/frosthaven-enhancement-calculator" target="_blank" rel="noopener">Rechner von pikdonker</a>.</p></details></section>
+        <section class="panel result" aria-labelledby="result-title"><h2 id="result-title" class="eyebrow">Deine Verbesserung kostet</h2><div class="cost-summary" role="status" aria-live="polite" aria-atomic="true"><output id="cost" class="amount" for="enhancement hexes level previous multiple lost actionPersistent persistent building">–</output><span class="gold-label">Gold</span><p id="selection" class="selection">Bitte zuerst ein Symbol auswählen.</p></div><details><summary>Rechenweg anzeigen</summary><div id="breakdown" class="calculation"></div></details><p id="result-note" class="hint mb-0"></p></section>
+        <section class="panel mt-4"><details><summary>Regelhinweise</summary><p>Berechnet dauerhafte Verbesserungen. Erst nach dem Bau von Gebäude 44 verfügbar.</p><p>Viereck: +1 oder Springen. Kreis: zusätzlich Elemente. Raute: zusätzlich negative Zustände. Raute mit +: zusätzlich positive Zustände. Sechseck: nur ein Wirkungsbereich-Feld.</p><p>Der Sticker muss zur markierten Fertigkeit passen: +1 erhöht den zugehörigen Wert. Springen ist nur bei Bewegung einer Figur erlaubt, nicht bei Beschworenen oder Markern / Auflegern.</p><p>Die Modifikatoren verändern zuerst die Grundkosten. Danach kommen Kartenstufe und bestehende Verbesserungen hinzu. Der Gebäuderabatt wird zuletzt abgezogen.</p><p>Ziel-, Element- und Wirkungsbereich-Verbesserungen werden für mehrere Ziele nicht verdoppelt. Beschworenenwerte erhalten keinen Faktor für anhaltende Boni.</p><p>Schadensfallen kosten wie Angriff +1, Heilfallen wie Heilung +1 und die Bewegung von Markern oder Auflegern wie Bewegung +1.</p></details><hr><details><summary>Regelquellen</summary><p><a href="https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=68" target="_blank" rel="noopener">Deutsche Spielregel · Verbesserungssymbole, Seite 68</a><br><a href="https://www.feuerland-spiele.de/fileadmin/game/Gloomhaven/Frosthaven/CG_F_Rulebook_1stEd_DE_FL_Low.pdf#page=77" target="_blank" rel="noopener">Deutsche Spielregel · Kosten, Seite 77</a></p><p><a href="https://cephalofairgames.github.io/frosthaven-faq/#42-enhancements" target="_blank" rel="noopener">Offizielle FAQ · Verbesserungen</a><br><a href="https://cephalofairgames.github.io/frosthaven-faq/#41-specific-building-questions" target="_blank" rel="noopener">Offizielle FAQ · Gebäuderabatte</a></p><p>Kostenregeln geprüft am 03.10.2026, Verbesserungssymbole am 08.10.2026. Inspiration: <a href="https://github.com/pikdonker/frosthaven-enhancement-calculator" target="_blank" rel="noopener">Rechner von pikdonker</a>.</p></details></section>
       </div></div>
     </div>
     <noscript><p class="panel mt-4">Bitte aktiviere JavaScript, um die Verbesserungskosten zu berechnen.</p></noscript>
@@ -85,10 +108,20 @@
     const enhancements = [
       ['move','Bewegung +1',30,'Werte'],['attack','Angriff +1',50,'Werte'],['range','Reichweite +1',30,'Werte'],['target','Ziele +1',75,'Werte',true],['shield','Schild +1',80,'Werte'],['retaliate','Vergeltung +1',60,'Werte'],['pierce','Durchstechen +1',30,'Werte'],['heal','Heilung +1',30,'Werte'],['push','Schieben +1',30,'Werte'],['pull','Ziehen +1',20,'Werte'],['teleport','Teleportieren +1',50,'Werte'],
       ['summonHp','Beschworenen-TP +1',40,'Beschworenenwerte'],['summonMove','Beschworenen-Bewegung +1',60,'Beschworenenwerte'],['summonAttack','Beschworenen-Angriff +1',100,'Beschworenenwerte'],['summonRange','Beschworenen-Reichweite +1',50,'Beschworenenwerte'],
-      ['regenerate','Regeneration',40,'Zustände'],['ward','Schutz',75,'Zustände'],['strengthen','Stärkung',100,'Zustände'],['bless','Segen',75,'Zustände'],['wound','Wunde',75,'Zustände'],['poison','Gift',50,'Zustände'],['immobilize','Lähmung',150,'Zustände'],['muddle','Verwirrung',40,'Zustände'],['curse','Fluch',150,'Zustände'],
+      ['regenerate','Regeneration',40,'Positive Zustände'],['ward','Schutz',75,'Positive Zustände'],['strengthen','Stärkung',100,'Positive Zustände'],['bless','Segen',75,'Positive Zustände'],['wound','Wunde',75,'Negative Zustände'],['poison','Gift',50,'Negative Zustände'],['immobilize','Lähmung',150,'Negative Zustände'],['muddle','Verwirrung',40,'Negative Zustände'],['curse','Fluch',150,'Negative Zustände'],
       ['element','Element',100,'Weitere Verbesserungen',true],['wildElement','Beliebiges Element',150,'Weitere Verbesserungen',true],['jump','Springen',60,'Weitere Verbesserungen'],['hex','Wirkungsbereich-Feld',null,'Weitere Verbesserungen',true],
       ['damageTrap','Schadensfalle +1',50,'Sonderfälle'],['healingTrap','Heilfalle +1',30,'Sonderfälle'],['tokenMove','Bewegung von Markern / Auflegern +1',30,'Sonderfälle']
-    ].map(([id,label,cost,group,multipleExempt=false]) => ({id,label,cost,group,multipleExempt,summon:group==='Beschworenenwerte'}));
+    ].map(([id,label,cost,group,multipleExempt=false]) => ({id,label,cost,group,multipleExempt,summon:group==='Beschworenenwerte',category:group==='Positive Zustände' ? 'positive' : group==='Negative Zustände' ? 'negative' : ['element','wildElement'].includes(id) ? 'element' : id==='jump' || id==='hex' ? id : 'value'}));
+    const symbols = {
+      square:{label:'Viereck',categories:['value','jump'],hint:'Erlaubt: +1. Bei Bewegung einer Figur auch Springen, außer bei Beschworenen.'},
+      circle:{label:'Kreis',categories:['value','jump','element'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur und Elemente (auch beliebiges Element).'},
+      diamond:{label:'Raute',categories:['value','jump','element','negative'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur, Elemente und negative Zustände.'},
+      diamondPlus:{label:'Raute mit +',categories:['value','jump','element','positive'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur, Elemente und positive Zustände.'},
+      hex:{label:'Sechseck',categories:['hex'],hint:'Erlaubt: ausschließlich ein zusätzliches Wirkungsbereich-Feld.'}
+    };
+    function availableEnhancements(symbol) {
+      return enhancements.filter(item => symbols[symbol]?.categories.includes(item.category));
+    }
     const format = value => new Intl.NumberFormat('de-DE',{maximumFractionDigits:2}).format(value);
     function calculateCost(state) {
       const enhancement = enhancements.find(item => item.id === state.enhancement);
@@ -112,32 +145,47 @@
       return {total,lines,enhancement};
     }
     const form = document.getElementById('calculator');
-    const fields = Object.fromEntries([...form.elements].filter(item => item.name).map(item => [item.name,item]));
-    for (const group of [...new Set(enhancements.map(item => item.group))]) {
-      const optgroup = document.createElement('optgroup');optgroup.label=group;
-      for (const item of enhancements.filter(item => item.group===group)) {
-        const option = document.createElement('option');option.value=item.id;option.textContent=`${item.label} · ${item.cost===null ? '200 ÷ Felder' : format(item.cost)} Gold`;optgroup.append(option);
+    const fields = Object.fromEntries([...form.elements].filter(item => item.name && item.name!=='symbol').map(item => [item.name,item]));
+    fields.symbol=form.elements.namedItem('symbol');
+    let renderedSymbol;
+    function updateEnhancementOptions() {
+      const previous=fields.enhancement.value;
+      const available=availableEnhancements(fields.symbol.value);
+      const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent=fields.symbol.value ? 'Bitte Verbesserung auswählen' : 'Bitte zuerst ein Symbol auswählen';
+      fields.enhancement.replaceChildren(placeholder);
+      for (const group of [...new Set(available.map(item => item.group))]) {
+        const optgroup = document.createElement('optgroup');optgroup.label=group;
+        for (const item of available.filter(item => item.group===group)) {
+          const option = document.createElement('option');option.value=item.id;option.textContent=`${item.label} · ${item.cost===null ? '200 ÷ Felder' : format(item.cost)} Gold`;optgroup.append(option);
+        }
+        fields.enhancement.append(optgroup);
       }
-      fields.enhancement.append(optgroup);
+      fields.enhancement.value=available.some(item => item.id===previous) ? previous : '';
     }
-    fields.enhancement.value='attack';
-    fields.enhancement.querySelector('[value="attack"]').defaultSelected=true;
     function render() {
-      const selected = enhancements.find(item => item.id===fields.enhancement.value);
+      const symbol=fields.symbol.value;
+      if (symbol!==renderedSymbol) {updateEnhancementOptions();renderedSymbol=symbol;}
+      const selected = availableEnhancements(symbol).find(item => item.id===fields.enhancement.value);
+      document.getElementById('symbol-hint').textContent=symbols[symbol]?.hint || 'Wähle das Symbol an der Stelle, die du verbessern möchtest.';
+      document.getElementById('enhancement-step').disabled=!symbol;
+      document.getElementById('card-step').disabled=!selected;
+      document.getElementById('building-step').disabled=!selected;
+      document.getElementById('enhancement-hint').textContent=selected?.id==='jump' ? 'Nur für Bewegung einer Figur. Nicht für Beschworene oder die Bewegung von Markern / Auflegern.' : selected?.category==='value' ? 'Wähle den Wert, neben dem das Symbol auf deiner Karte steht.' : 'Die Auswahl zeigt nur Sticker, die zum gewählten Symbol passen.';
+      const output = document.getElementById('cost');const breakdown=document.getElementById('breakdown');const note=document.getElementById('result-note');
+      if (!selected) {document.getElementById('hex-fields').hidden=true;fields.hexes.disabled=true;output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent=symbol ? 'Bitte eine Verbesserung auswählen.' : 'Bitte zuerst ein Symbol auswählen.';note.textContent=symbol ? 'Wähle jetzt den passenden Sticker, danach Karte, Aktion und Gebäude.' : 'Wähle zuerst das Verbesserungssymbol auf deiner Karte.';return;}
       document.getElementById('hex-fields').hidden=selected.id!=='hex';
       fields.hexes.disabled=selected.id!=='hex';
       fields.multiple.disabled=selected.multipleExempt;
       fields.persistent.disabled=selected.summon;
       document.getElementById('multiple-hint').textContent=selected.multipleExempt ? 'Für diese Verbesserung gibt es keinen Mehrziel-Aufschlag.' : 'Gilt auch bei bedingten zusätzlichen Zielen, mehreren Beschworenen oder Markern.';
       document.getElementById('persistent-hint').textContent=selected.summon ? 'Beschworenenwerte sind von der Verdreifachung ausgenommen.' : 'Verdreifacht die Grundkosten. Prüfe die Fertigkeit, nicht nur das Symbol der Aktion.';
-      const output = document.getElementById('cost');const breakdown=document.getElementById('breakdown');const note=document.getElementById('result-note');
       if (!form.checkValidity()) {output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent='Bitte gültige ganze Zahlen eingeben.';note.textContent='Die Anzahl muss mindestens 0 sein, die Feldanzahl mindestens 1.';return;}
       const state=Object.fromEntries(Object.entries(fields).map(([name,item]) => [name,item.type==='checkbox' ? item.checked : item.tagName==='INPUT' || name==='level' || name==='building' ? Number(item.value) : item.value]));
       if (fields.hexes.disabled) state.hexes=2;
       let result;
       try {result=calculateCost(state);} catch {output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent='Bitte kleinere gültige ganze Zahlen eingeben.';note.textContent='';return;}
       output.value=format(result.total);
-      document.getElementById('selection').textContent=`${selected.label} · Karte Stufe ${state.level===1 ? '1 / X' : state.level}`;
+      document.getElementById('selection').textContent=`${symbols[symbol].label} · ${selected.label} · Karte Stufe ${state.level===1 ? '1 / X' : state.level}`;
       breakdown.replaceChildren();
       for (const line of [...result.lines,{label:'Gesamtkosten',value:result.total,total:true}]) {
         const row=document.createElement('div');row.className=`line${line.total ? ' total' : ''}`;

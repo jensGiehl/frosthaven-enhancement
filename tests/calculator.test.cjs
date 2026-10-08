@@ -6,7 +6,30 @@ const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const source = html.match(/<script id="calculator-script">([\s\S]*?)<\/script>/)[1].split("const form = document")[0];
 const calculate = vm.runInNewContext(`${source}; calculateCost`);
+const available = vm.runInNewContext(`${source}; availableEnhancements`);
+const allowed = symbol => Array.from(available(symbol),item => item.id);
 const cost = (changes={}) => calculate({enhancement:'attack',level:1,building:1,previous:0,hexes:2,multiple:false,lost:false,actionPersistent:false,persistent:false,...changes}).total;
+
+test('square allows all numeric stickers and jump, including special cases',() => {
+  assert.deepEqual(allowed('square'),['move','attack','range','target','shield','retaliate','pierce','heal','push','pull','teleport','summonHp','summonMove','summonAttack','summonRange','jump','damageTrap','healingTrap','tokenMove']);
+});
+test('circle adds both element stickers, but no conditions or area hex',() => {
+  assert.deepEqual(allowed('circle').filter(id => !allowed('square').includes(id)),['element','wildElement']);
+  for (const id of allowed('square')) assert.ok(allowed('circle').includes(id));
+});
+test('diamonds distinguish negative and positive conditions and retain circle options',() => {
+  assert.deepEqual(allowed('diamond').filter(id => !allowed('circle').includes(id)),['wound','poison','immobilize','muddle','curse']);
+  assert.deepEqual(allowed('diamondPlus').filter(id => !allowed('circle').includes(id)),['regenerate','ward','strengthen','bless']);
+  for (const symbol of ['diamond','diamondPlus']) {
+    for (const id of allowed('circle')) assert.ok(allowed(symbol).includes(id));
+    assert.ok(!allowed(symbol).includes('hex'));
+  }
+});
+test('hex only allows an area hex and no symbol exposes no enhancements',() => {
+  assert.deepEqual(allowed('hex'),['hex']);
+  assert.deepEqual(allowed(''),[]);
+  assert.deepEqual(allowed('missing'),[]);
+});
 
 test('base costs and X / level 1',() => {
   assert.equal(cost(),50);
