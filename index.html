@@ -24,7 +24,7 @@
     fieldset{min-width:0}legend{float:none;width:auto}.symbol-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
     .symbol-option{position:relative;display:flex;align-items:center;gap:10px;border:1px solid #cbd9df;border-radius:10px;padding:12px;cursor:pointer;background:#f8fafb;min-height:64px;font-size:.85rem;font-weight:650}
     .symbol-option input{position:absolute;opacity:0;width:1px;height:1px}.symbol-option:has(input:checked){background:#e5f2f4;border-color:#276779;box-shadow:inset 0 0 0 1px #276779}.symbol-option:has(input:focus-visible){outline:3px solid #4591ac;outline-offset:3px}
-    .symbol-option svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:2}.symbol-option:last-child{grid-column:1/-1}
+    .symbol-option svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:2}
     .option{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid #dde6e9;border-radius:9px;margin-top:8px;cursor:pointer}
     .option:has(input:checked){background:#edf6f7;border-color:#7cabb8}.option:has(input:disabled){opacity:.65}
     .form-check-input{flex:none;width:21px;height:21px;margin:3px 0 0;cursor:pointer}.form-check-input:checked{background-color:#276779;border-color:#276779}
@@ -63,7 +63,8 @@
               <label class="symbol-option"><input type="radio" name="symbol" value="circle" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/></svg><span>Kreis</span></label>
               <label class="symbol-option"><input type="radio" name="symbol" value="diamond" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z"/></svg><span>Raute</span></label>
               <label class="symbol-option"><input type="radio" name="symbol" value="diamondPlus" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z M16 10v12 M10 16h12"/></svg><span>Raute mit +</span></label>
-              <label class="symbol-option"><input type="radio" name="symbol" value="hex" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m9 4 14 0 7 12-7 12H9L2 16Z"/></svg><span>Sechseck · Wirkungsbereich</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="hex" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m9 4 14 0 7 12-7 12H9L2 16Z"/></svg><span>Sechseck</span></label>
+              <label class="symbol-option"><input type="radio" name="symbol" value="none" required aria-describedby="symbol-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8h22 M5 16h22 M5 24h22"/></svg><span>Ohne</span></label>
             </div>
             <p id="symbol-hint" class="hint">Wähle das Symbol an der Stelle, die du verbessern möchtest.</p>
           </fieldset>
@@ -117,7 +118,8 @@
       circle:{label:'Kreis',categories:['value','jump','element'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur und Elemente (auch beliebiges Element).'},
       diamond:{label:'Raute',categories:['value','jump','element','negative'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur, Elemente und negative Zustände.'},
       diamondPlus:{label:'Raute mit +',categories:['value','jump','element','positive'],hint:'Erlaubt: +1, Springen bei Bewegung einer Figur, Elemente und positive Zustände.'},
-      hex:{label:'Sechseck',categories:['hex'],hint:'Erlaubt: ausschließlich ein zusätzliches Wirkungsbereich-Feld.'}
+      hex:{label:'Sechseck',categories:['hex'],hint:'Erlaubt: ausschließlich ein zusätzliches Wirkungsbereich-Feld.'},
+      none:{label:'Ohne Symbolfilter',categories:['value','jump','element','negative','positive','hex'],hint:'Ohne Symbolfilter: Die vollständige Liste aller Verbesserungen wird angezeigt.'}
     };
     function availableEnhancements(symbol) {
       return enhancements.filter(item => symbols[symbol]?.categories.includes(item.category));
@@ -170,7 +172,7 @@
       document.getElementById('enhancement-step').disabled=!symbol;
       document.getElementById('card-step').disabled=!selected;
       document.getElementById('building-step').disabled=!selected;
-      document.getElementById('enhancement-hint').textContent=selected?.id==='jump' ? 'Nur für Bewegung einer Figur. Nicht für Beschworene oder die Bewegung von Markern / Auflegern.' : selected?.category==='value' ? 'Wähle den Wert, neben dem das Symbol auf deiner Karte steht.' : 'Die Auswahl zeigt nur Sticker, die zum gewählten Symbol passen.';
+      document.getElementById('enhancement-hint').textContent=selected?.id==='jump' ? 'Nur für Bewegung einer Figur. Nicht für Beschworene oder die Bewegung von Markern / Auflegern.' : selected?.category==='value' ? 'Wähle den Wert, neben dem das Symbol auf deiner Karte steht.' : symbol==='none' ? 'Alle Verbesserungen werden angezeigt. Prüfe am Verbesserungssymbol auf deiner Karte, ob der Sticker erlaubt ist.' : 'Die Auswahl zeigt nur Sticker, die zum gewählten Symbol passen.';
       const output = document.getElementById('cost');const breakdown=document.getElementById('breakdown');const note=document.getElementById('result-note');
       if (!selected) {document.getElementById('hex-fields').hidden=true;fields.hexes.disabled=true;output.value='–';breakdown.replaceChildren();document.getElementById('selection').textContent=symbol ? 'Bitte eine Verbesserung auswählen.' : 'Bitte zuerst ein Symbol auswählen.';note.textContent=symbol ? 'Wähle jetzt den passenden Sticker, danach Karte, Aktion und Gebäude.' : 'Wähle zuerst das Verbesserungssymbol auf deiner Karte.';return;}
       document.getElementById('hex-fields').hidden=selected.id!=='hex';

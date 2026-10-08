@@ -17,7 +17,7 @@ Der Workflow prüft die Berechnung und veröffentlicht nur `index.html`. Er kann
 
 ## Berechnung
 
-Die Eingabe folgt der Reihenfolge **Symbol → Verbesserung → Karte & Aktion → Gebäude**. Zuerst das Verbesserungssymbol auf der Karte auswählen; danach zeigt die Stickerauswahl nur passende Verbesserungen. Die übrigen Angaben werden nach der Stickerwahl freigeschaltet.
+Die Eingabe folgt der Reihenfolge **Symbol → Verbesserung → Karte & Aktion → Gebäude**. Zuerst das Verbesserungssymbol auf der Karte auswählen; danach zeigt die Stickerauswahl nur passende Verbesserungen. Mit **Ohne** wird der Symbolfilter ausgeschaltet und die vollständige Liste aller 31 Verbesserungen angezeigt. Die übrigen Angaben werden nach der Stickerwahl freigeschaltet.
 
 | Symbol | Erlaubte Sticker |
 | --- | --- |
@@ -26,6 +26,7 @@ Die Eingabe folgt der Reihenfolge **Symbol → Verbesserung → Karte & Aktion �
 | Raute | Wie Kreis, zusätzlich Wunde, Gift, Lähmung, Verwirrung und Fluch |
 | Raute mit + | Wie Kreis, zusätzlich Regeneration, Schutz, Stärkung und Segen |
 | Sechseck | Nur ein zusätzliches Wirkungsbereich-Feld |
+| Ohne | Vollständige Liste ohne Symbolfilter |
 
 Beim Symbolwechsel bleibt eine weiterhin erlaubte Verbesserung ausgewählt. Eine nicht mehr erlaubte Verbesserung wird gelöscht und die Kostenanzeige wartet auf eine neue Auswahl. Zurücksetzen beginnt wieder bei der Symbolwahl.
 
@@ -52,7 +53,7 @@ Mit Node.js (im Workflow Version 24):
 node --test tests/calculator.test.cjs
 ```
 
-Die Tests verwenden dieselben Funktionen wie die HTML-Datei und prüfen insbesondere die erlaubten Sticker für alle fünf Symbole, Modifikatoren-Reihenfolge, Mehrziel-Ausnahmen, Beschworenenwerte, Gebäuderabatte und ungültige Eingaben.
+Die Tests verwenden dieselben Funktionen wie die HTML-Datei und prüfen insbesondere die erlaubten Sticker für alle fünf Symbole und die vollständige Liste bei „Ohne“, Modifikatoren-Reihenfolge, Mehrziel-Ausnahmen, Beschworenenwerte, Gebäuderabatte und ungültige Eingaben.
 
 ## Quellen
 

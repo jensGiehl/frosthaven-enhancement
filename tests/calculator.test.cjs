@@ -25,10 +25,19 @@ test('diamonds distinguish negative and positive conditions and retain circle op
     assert.ok(!allowed(symbol).includes('hex'));
   }
 });
-test('hex only allows an area hex and no symbol exposes no enhancements',() => {
+test('hex only allows an area hex and an unselected symbol exposes no enhancements',() => {
   assert.deepEqual(allowed('hex'),['hex']);
   assert.deepEqual(allowed(''),[]);
   assert.deepEqual(allowed('missing'),[]);
+});
+test('explicit none option exposes the complete list without changing symbol restrictions',() => {
+  const all = vm.runInNewContext(`${source}; enhancements.map(item => item.id)`);
+  assert.deepEqual(allowed('none'),Array.from(all));
+  assert.equal(allowed('none').length,31);
+  for (const symbol of ['square','circle','diamond','diamondPlus','hex']) {
+    assert.ok(allowed(symbol).length<allowed('none').length);
+    for (const id of allowed(symbol)) assert.ok(allowed('none').includes(id));
+  }
 });
 
 test('base costs and X / level 1',() => {
